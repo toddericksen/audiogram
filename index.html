@@ -46,7 +46,7 @@
 
   #lettersDiv span {
     display: inline-block;
-    margin: 0 10px 0 0 ;
+    margin: 0 13px 0 0 ;
     color: #fff;
     letter-spacing: -5px;
     font-family: "Spartan";
@@ -94,8 +94,8 @@
 <body>
 
 <div class="wrapper">
-  <button id="storyPlayButton">
-    PLAY
+  <button id="storyPlayButton" disabled="disabled">
+    Play
   </button>
   <div class="letters" id="lettersDiv">
   </div>
@@ -3309,7 +3309,8 @@
     }
   ]
 }
-
+  var chunks_index = 0
+  var word_index = 0
   var audio = document.getElementById("storyAudio")
   var lettersDiv = document.getElementById("lettersDiv")
   var storyPlayButton = document.getElementById("storyPlayButton")
@@ -3318,108 +3319,79 @@
 
   var tl = anime.timeline({
     easing: 'easeInOutExpo',
+    autoplay: false,
   });
 
-  chunks = chunkArray(transcript.segments, 10)
 
-  chunks.forEach(function(item, index) {
-    let chunk = document.createElement("div")
-    chunk.setAttribute("id", "chunk_"+index)
-    chunk.classList.add("chunk")
-    lettersDiv.appendChild(chunk)
+
+  chunks = chunkArray(transcript.segments, 12)
+
+  function addChunk() {
+    var index = chunks_index
+    var item = chunks[index]
+
+    var chunk = "<div class=\"chunk\" id=\"chunk_"+index+"\">"
+
     
-    tl.add({
+
+    chunks[index].forEach(function(item, index){
+      var segment = "<span id=\"word_"+index+"\">"+item.body+"</span>"
+      chunk += segment
+    })
+
+    chunk += "</div>"
+    lettersDiv.innerHTML += chunk
+
+    tl
+    .add({
       targets: "#chunk_"+index,
       opacity: 1
     }, item[0].startTime * 1000)
-
-    tl.add({
+    .add({
       targets: "#chunk_"+index,
       opacity: 0
     }, item[item.length - 1].endTime * 1000)
+    
+    chunks_index ++
+
+  }
 
 
-    chunks[index].forEach(function(item, index){
-      let segment = document.createElement("span")
-      segment.setAttribute("id", "word_"+index)
-      segment.innerHTML = item.body
-      chunk.appendChild(segment)
+  function addWord(){
+    var index = word_index;
+    var item = transcript.segments[index];
+    
+    tl.add({
+      targets: "#word_"+index,
+      translateY: -2,
+      opacity: 1
+    }, item.startTime * 1000)
+    word_index ++
+    // console.log("word", index)
+    
+  }
 
-      tl.add({
-        targets: "#word_"+index,
-        translateY: -2,
-        opacity: 1
-      }, item.startTime * 1000)
-      })
-  })
-
-  // transcript.segments.forEach(function(item, index){
-  //   let segment = document.createElement("span")
-  //   segment.setAttribute("id", "word_"+index)
-  //   segment.innerHTML = item.body
-  //   lettersDiv.appendChild(segment)
-
-  //   tl.add({
-  //     targets: "#word_"+index,
-  //     translateY: [0, -2, 0],
-  //     opacity: [.35, 1, .8]
-  //   }, item.startTime * 1000)
-  // })
-
-  // <% @words.each_with_index do |word, index| %>
-  //   tl.add({
-  //       targets: '#word_<%= index %>',
-  //       // translateY: [50, 0, 0],
-  //       opacity: [.8, .2]
-  //   }, <%= word[:start] + 1000 %>)
-  // <% end %>
-
-  tl.add({
-        targets: '.letter-scroll',
-        translateY: [1000],
-        opacity: [.3]
-    },"+=1000")
-
-  tl.add({
-        targets: '#footer',
-        translateY: [1000],
-        opacity: [.3]
-    },"-=900")
-
-
-  tl.pause();
-
-  audio.onloadedmetadata = function() {
-
-    var promise = audio.play();
-
-    if (promise !== undefined) {
-      promise.then(_ => {
-        audio.pause();
-        playAudio()
-      }).catch(error => {
-        storyPlayButton.classList = "show"
-      });
+  function chunkPump(){
+    while (chunks_index < chunks.length){
+      setTimeout(addChunk(), 100);
+    } 
+    if (chunks_index >= chunks.length) {
+      while (word_index < transcript.segments.length){
+        setTimeout(addWord(), 100);
+      } 
     }
-  };
+
+    if (word_index >= transcript.segments.length) {
+      storyPlayButton.disabled = ""
+    }
+  }
+  
+  chunkPump();
+
   function playAudio(){
     storyPlayButton.classList = ""
-
-    setTimeout(function(){
-      tl.play();
-      setTimeout(function(){
-        audio.play();
-      }, 400)
-    }, 1000)
-
-    
-    var progress = anime({
-      easing: 'linear',
-      targets: '.progress',
-      width: ['0%', '100%'],
-      duration: audio.duration * 1000,
-      complete: alldone
-    });
+    audio.play();
+    tl.play();
   };
 
   function alldone(){
