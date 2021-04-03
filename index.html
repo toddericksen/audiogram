@@ -16,6 +16,7 @@
     margin: 0;
     padding: 0;
     background: #6A3DC5;
+    overflow: hidden;
     /*background: radial-gradient(rgb(132, 56, 202), rgba(61, 21, 116, 1));*/
   }
 
@@ -48,7 +49,7 @@
     display: inline-block;
     margin: 0 13px 0 0 ;
     color: #fff;
-    letter-spacing: -5px;
+    letter-spacing: -4px;
     font-family: "Spartan";
     font-size: 80px;
     line-height: 1.5;
@@ -63,14 +64,23 @@
     width: 100px;
     height: 100px;
     display: block;
-    border: 3px solid rgba(255, 255, 255,.8);
-    background: rgba(255, 255, 255,.28);
+    border: 3px solid rgba(255, 255, 255,.2);
+    background: rgba(255, 255, 255,.8);
     color: #fff;
     font-family: "Spartan";
     cursor: pointer;
     outline: none;
+    transform: scale(.5) translateY(100%);
     transition: all .2s ease;
     z-index: 3;
+  }
+
+  #storyPlayButton.ready {
+    transform: scale(1) translateY(0);
+    border: 3px solid rgba(255, 255, 255,.8);
+    background: rgba(255, 255, 255,.28);
+    color: #fff;
+    cursor: pointer;
   }
 
   #storyPlayButton:hover, #storyPlayButton:active {
@@ -3309,7 +3319,10 @@
     }
   ]
 }
-
+  var tl = anime.timeline({
+      easing: 'easeInOutExpo',
+      autoplay: false,
+    });
 
   var chunks_index = 0
   var word_index = 0
@@ -3317,16 +3330,6 @@
   var lettersDiv = document.getElementById("lettersDiv")
   var storyPlayButton = document.getElementById("storyPlayButton")
   storyPlayButton.addEventListener("click", playAudio)
-
-
-  var tl = anime.timeline({
-    easing: 'easeInOutExpo',
-    autoplay: false,
-  });
-
-
-
-  chunks = chunkArray(transcript.segments, 12)
 
   function addChunk() {
     var index = chunks_index
@@ -3387,13 +3390,12 @@
       })
 
       storyPlayButton.disabled = ""
+      storyPlayButton.classList = "ready"
     }
   }
-  
-  chunkPump();
 
   function playAudio(){
-    storyPlayButton.classList = ""
+    
     tl.play()
     setTimeout(audio.play(), 1500)
     
@@ -3409,7 +3411,16 @@
         result.push(chunk)
     }
     return result
-}
+  }
+
+  function init() {
+    chunks = chunkArray(transcript.segments, 12)
+    chunkPump();
+  }
+
+  setTimeout(init(), 200)
+
+
 
 </script>
 </body>
