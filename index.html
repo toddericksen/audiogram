@@ -3309,6 +3309,8 @@
     }
   ]
 }
+
+
   var chunks_index = 0
   var word_index = 0
   var audio = document.getElementById("storyAudio")
@@ -3332,28 +3334,16 @@
 
     var chunk = "<div class=\"chunk\" id=\"chunk_"+index+"\">"
 
-    
-
     chunks[index].forEach(function(item, index){
-      var segment = "<span id=\"word_"+index+"\">"+item.body+"</span>"
+      var segment = "<span id=\"word_"+word_index+"\">"+item.body+"</span>"
       chunk += segment
+      word_index ++
     })
 
     chunk += "</div>"
     lettersDiv.innerHTML += chunk
-
-    tl
-    .add({
-      targets: "#chunk_"+index,
-      opacity: 1
-    }, item[0].startTime * 1000)
-    .add({
-      targets: "#chunk_"+index,
-      opacity: 0
-    }, item[item.length - 1].endTime * 1000)
     
     chunks_index ++
-
   }
 
 
@@ -3365,23 +3355,37 @@
       targets: "#word_"+index,
       translateY: -2,
       opacity: 1
-    }, item.startTime * 1000)
+    }, item.startTime * 970)
     word_index ++
     // console.log("word", index)
-    
+
   }
 
   function chunkPump(){
     while (chunks_index < chunks.length){
-      setTimeout(addChunk(), 100);
+      setTimeout(addChunk(), 10);
     } 
+
     if (chunks_index >= chunks.length) {
+      word_index = 0
       while (word_index < transcript.segments.length){
-        setTimeout(addWord(), 100);
+        setTimeout(addWord(), 10);
       } 
     }
 
     if (word_index >= transcript.segments.length) {
+      chunks.forEach(function(item, index){
+        tl
+        .add({
+          targets: "#chunk_"+index,
+          opacity: 1
+        }, item[0].startTime * 970)
+        .add({
+          targets: "#chunk_"+index,
+          opacity: 0
+        }, item[item.length - 1].endTime * 970)
+      })
+
       storyPlayButton.disabled = ""
     }
   }
@@ -3390,8 +3394,9 @@
 
   function playAudio(){
     storyPlayButton.classList = ""
-    audio.play();
-    tl.play();
+    tl.play()
+    setTimeout(audio.play(), 1500)
+    
   };
 
   function alldone(){
