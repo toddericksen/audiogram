@@ -3358,7 +3358,7 @@
       targets: "#word_"+index,
       translateY: -2,
       opacity: 1
-    }, item.startTime * 1000)
+    }, (item.startTime * 1000) - 250)
     word_index ++
     // console.log("word", index)
 
@@ -3395,10 +3395,8 @@
   }
 
   function playAudio(){
-    
+    audio.play()
     tl.play()
-    setTimeout(audio.play(), 1500)
-    
   };
 
   function alldone(){
