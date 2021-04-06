@@ -3358,7 +3358,7 @@
       targets: "#word_"+index,
       translateY: -2,
       opacity: 1
-    }, item.startTime * 970)
+    }, item.startTime * 1000)
     word_index ++
     // console.log("word", index)
 
@@ -3382,11 +3382,11 @@
         .add({
           targets: "#chunk_"+index,
           opacity: 1
-        }, item[0].startTime * 970)
+        }, item[0].startTime * 1000)
         .add({
           targets: "#chunk_"+index,
           opacity: 0
-        }, item[item.length - 1].endTime * 970)
+        }, item[item.length - 1].endTime * 1000)
       })
 
       storyPlayButton.disabled = ""
