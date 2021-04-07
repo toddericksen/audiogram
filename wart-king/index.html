@@ -182,7 +182,7 @@
   var lettersDiv = document.getElementById("lettersDiv")
   var storyPlayButton = document.getElementById("storyPlayButton")
   storyPlayButton.addEventListener("click", playAudio)
-
+  audio.addEventListener("ended", resetPlayer)
   function addChunk() {
     var index = chunks_index
     var item = chunks[index]
@@ -302,6 +302,13 @@
     storyPlayButton.classList.add("ready")
   }
 });
+
+  function resetPlayer() {
+    audio.load()
+    tl.restart()
+    tl.pause()
+    storyPlayButton.classList.add("ready")
+  }
 
 </script>
 </body>
