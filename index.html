@@ -18,9 +18,23 @@
     background: ;
     overflow: hidden;
     /*background: radial-gradient(rgb(132, 56, 202), rgba(61, 21, 116, 1));*/
-    background: #6A3DC5 url('unsplash.jpg') no-repeat;
-    background-size: cover;
+    background: #6A3DC5;
   }
+
+  body:before {
+    opacity: .5;
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: url('unsplash.jpg') no-repeat 50% 50%;
+    background-size: cover;
+
+  }
+
+
   .wrapper {
     margin: 0 auto;
     width: 100%;
@@ -256,7 +270,7 @@
   }
 
   function init() {
-    chunks = chunkArray(transcript.segments, 12)
+    chunks = chunkArray(transcript.segments, 20)
     chunkPump();
   }
 
