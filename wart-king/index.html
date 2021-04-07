@@ -295,7 +295,13 @@
     })
     .then(data => init(data))
 
-
+  document.addEventListener('visibilitychange', function(ev) {
+  if (document.visibilityState == "hidden") {
+    audio.pause()
+    tl.pause()
+    storyPlayButton.classList.add("ready")
+  }
+});
 
 </script>
 </body>
