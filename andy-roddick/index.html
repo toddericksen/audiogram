@@ -157,7 +157,7 @@
   <div class="letters" id="lettersDiv">
   </div>
   <audio id="storyAudio" type="audio/mpeg" autostart="false" autostart="false"
-    src="https://d1d3n03t5zntha.cloudfront.net/7b141b24-1e4a-46b6-bd09-a49d05bdc864/media_original-b25a93238e2244c9853d5f03b3497f34.m4a">
+    src="https://d1d3n03t5zntha.cloudfront.net/df3f58c2-5fbe-44f9-856e-027f61997257/media_stream-457585d5aa874b3d8e8ae7a2a94790ea.m3u8">
   </audio>
 </div>
 
@@ -195,12 +195,6 @@
     chunks[index].forEach(function(item, index){
       var speaker
       switch (item.speaker) {
-        case "The Wart King":
-          speaker = "two"
-          break;
-        case "The Wise Man":
-          speaker = "three"
-          break;
         default: 
           speaker = "one"
       }
@@ -290,7 +284,7 @@
 
   // const data = require('./transcript.json');
 
-  fetch("https://d1d3n03t5zntha.cloudfront.net/7b141b24-1e4a-46b6-bd09-a49d05bdc864/transcript-de72fdcc89734ce1a9a92b0025007a79.json")
+  fetch("https://d1d3n03t5zntha.cloudfront.net/df3f58c2-5fbe-44f9-856e-027f61997257/transcript-b27b36b6eebf47ed86b0a256034e429c.json")
     .then(response => {
       return response.json();
     })
