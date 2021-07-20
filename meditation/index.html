@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Audiogram - by Campfire</title>
+  <meta property="og:title" content="" />
+  <meta property="og:description" content="" />
+  <meta property="og:image" content="" />
+  <meta property="og:url" content="" />
+  <meta property="og:type" content="website" />
+  <meta name="author" content="Campfire team">
+  <style type="text/css">
+  
+  @import url('https://fonts.googleapis.com/css2?family=Spartan:wght@600&display=swap');
+  
+  body {
+    margin: 0;
+    padding: 0;
+    background: ;
+    overflow: hidden;
+    /*background: radial-gradient(rgb(132, 56, 202), rgba(61, 21, 116, 1));*/
+    background: #6A3DC5;
+  }
+
+  body:before {
+    opacity: .5;
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: url('meditate.jpg') no-repeat 50% 50%;
+    background-size: cover;
+
+  }
+
+
+  .wrapper {
+    margin: 0 auto;
+    width: 100%;
+    max-width: 1220px;
+    height: 100vh;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+  }
+
+  #logo {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+  }
+
+  #lettersDiv {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 200px;
+    max-height: 600px;
+  }
+
+  #lettersDiv span {
+    display: inline-block;
+    margin: 0 13px 0 0 ;
+    color: #fff;
+    font-family: "Spartan";
+    /*font-size: 80px;
+    letter-spacing: -4px;*/
+    line-height: 1.5;
+    opacity: 0.25;
+    font-size: 64px;
+    letter-spacing: -4px;
+    
+  }
+
+  #lettersDiv span.two {
+    color: #FF6776;
+
+  }
+
+  #lettersDiv span.three {
+    color: #69E3D6;
+  }
+
+  .chunk {
+    position: absolute;
+    bottom: 50px;
+    opacity: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+
+
+  #storyPlayButton {
+    font-size: 2rem;
+    position: absolute;
+    border-radius: 300px;
+    display: block;
+    border: 3px solid rgba(255, 255, 255,.2);
+    background-color: rgba(255, 255, 255, .4);
+    background-repeat: no-repeat;
+    color: #fff;
+    font-family: "Spartan";
+    cursor: pointer;
+    outline: none;
+    transform: scale(.8) translateY(3px);
+    transition: all .5s ease;
+    z-index: 99;
+    bottom: 40px;
+    right: 20px;
+    width: 100px;
+    height: 100px;
+    background-image: url('../assets/pause.svg');
+    background-size: 50px;
+    background-position: 50% 50%;
+  }
+
+  #storyPlayButton.ready {
+    background-position: 50% 50%;
+    background-size: 100px;
+    top: calc(50% - 120px);
+    left: calc(50% - 120px);
+    width: 240px;
+    height: 240px;
+    transform: scale(1) translateY(0);
+    border: 3px solid rgba(255, 255, 255,.8);
+    background-color: rgba(255, 255, 255,.28);
+    background-repeat: no-repeat;
+    background-image: url('../assets/play.svg') ;    
+    color: #fff;
+    cursor: pointer;
+  }
+
+  #storyPlayButton:hover, #storyPlayButton:active {
+    transform: translateY(-3px);
+  }
+
+  #storyPlayButton:active {
+    border: 3px solid rgba(255, 255, 255,.8);
+    background: rgb(255, 255, 255);
+    color: #6A3DC5;
+  }
+
+  
+
+</style>
+<script type="text/javascript" src="../assets/anime.min.js"></script>
+</head>
+<body>
+
+<div class="wrapper">
+  <button id="storyPlayButton" disabled="disabled">
+  </button>
+  <div class="letters" id="lettersDiv">
+  </div>
+  <audio id="storyAudio" type="audio/mpeg" autostart="false" autostart="false"
+    src="https://d1d3n03t5zntha.cloudfront.net/05e72cc3-f637-4c1a-ac68-aac86b934c78/media_original-5e73b1af464d4d7e8184c3ff4fb74cd5.m4a">
+  </audio>
+</div>
+
+<a href="https://meet.getcampfire.com" id="logo">
+  <img 
+    alt="Campfire logo"
+    src="../assets/campfire.png"
+    srcset="../assets/campfire-2x.png 2x"
+  >
+  </a>
+<script type="text/javascript">
+  
+
+  var transcript
+  var tl = anime.timeline({
+      easing: 'easeInOutExpo',
+      autoplay: false,
+    });
+
+  var chunks_index = 0
+  var word_index = 0
+  var audio = document.getElementById("storyAudio")
+  var lettersDiv = document.getElementById("lettersDiv")
+  var storyPlayButton = document.getElementById("storyPlayButton")
+  storyPlayButton.addEventListener("click", playAudio)
+  audio.addEventListener("ended", resetPlayer)
+  function addChunk() {
+    var index = chunks_index
+    var item = chunks[index]
+
+    var chunk = "<div class=\"chunk\" id=\"chunk_"+index+"\">"
+
+
+
+    chunks[index].forEach(function(item, index){
+      var speaker
+      switch (item.speaker) {
+        default: 
+          speaker = "one"
+      }
+
+      var segment = "<span class=\""+speaker+"\" id=\"word_"+word_index+"\">"+item.body+"</span>"
+      chunk += segment
+      word_index ++
+    })
+
+    chunk += "</div>"
+    lettersDiv.innerHTML += chunk
+    
+    chunks_index ++
+  }
+
+
+  function addWord(){
+    var index = word_index;
+    var item = transcript.segments[index];
+    
+    tl.add({
+      targets: "#word_"+index,
+      translateY: -2,
+      opacity: 1
+    }, (item.startTime * 1000) - 400)
+    word_index ++
+    // console.log("word", index)
+
+  }
+
+  function chunkPump(){
+    while (chunks_index < chunks.length){
+      setTimeout(addChunk(), 10);
+    } 
+
+    if (chunks_index >= chunks.length) {
+      word_index = 0
+      while (word_index < transcript.segments.length){
+        setTimeout(addWord(), 10);
+      } 
+    }
+
+    if (word_index >= transcript.segments.length) {
+      chunks.forEach(function(item, index){
+        tl
+        .add({
+          targets: "#chunk_"+index,
+          opacity: 1
+        }, (item[0].startTime * 1000) - 400)
+        .add({
+          targets: "#chunk_"+index,
+          opacity: 0
+        }, (item[item.length - 1].endTime * 1000) - 400)
+      })
+
+      storyPlayButton.disabled = ""
+      storyPlayButton.classList = "ready"
+    }
+  }
+
+  function playAudio(){
+    if(storyPlayButton.classList.contains("ready")) {
+      audio.play()
+      tl.play()
+      storyPlayButton.classList.remove("ready")
+    } else {
+      audio.pause()
+      tl.pause()
+      storyPlayButton.classList.add("ready")
+    }
+  };
+
+  function chunkArray(array, size) {
+    let result = []
+    for (let i = 0; i < array.length; i += size) {
+        let chunk = array.slice(i, i + size)
+        result.push(chunk)
+    }
+    return result
+  }
+
+  function init(data) {
+    transcript = data
+    chunks = chunkArray(transcript.segments, 14)
+    chunkPump();
+  }
+
+  // const data = require('./transcript.json');
+
+  fetch("https://d1d3n03t5zntha.cloudfront.net/05e72cc3-f637-4c1a-ac68-aac86b934c78/transcript-9b9c621e3dc84b4cba511c888c978091.json")
+    .then(response => {
+      return response.json();
+    })
+    .then(data => init(data))
+
+  document.addEventListener('visibilitychange', function(ev) {
+  if (document.visibilityState == "hidden") {
+    audio.pause()
+    tl.pause()
+    storyPlayButton.classList.add("ready")
+  }
+});
+
+  function resetPlayer() {
+    audio.load()
+    tl.restart()
+    tl.pause()
+    storyPlayButton.classList.add("ready")
+  }
+
+</script>
+</body>
+</html>
